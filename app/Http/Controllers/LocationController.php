@@ -76,7 +76,30 @@ class LocationController extends Controller
 
     public function destroy(Location $location)
     {
-        $location->delete();
-        return redirect()->back();
+        try {
+            if ($location->foto && Storage::disk('public')->exists($location->foto)) {
+                Storage::disk('public')->delete($location->foto);
+            }
+
+            $location->delete();
+
+            // ✅ Kembalikan respon JSON sukses dengan status 200
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Lokasi berhasil dihapus'
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Gagal hapus lokasi', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            // ❌ Kalau gagal
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat menghapus data',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

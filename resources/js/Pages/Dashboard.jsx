@@ -14,6 +14,14 @@ L.Icon.Default.mergeOptions({
     shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
+// ✅ (Opsional) Custom icon biru
+const blueIcon = new L.Icon({
+    iconUrl: "https://cdn-icons-png.flaticon.com/512/854/854878.png",
+    iconSize: [30, 30],
+    iconAnchor: [15, 30],
+    popupAnchor: [0, -28],
+});
+
 export default function Dashboard({ locations }) {
     // Tentukan posisi awal peta (jika belum ada data, gunakan Jakarta)
     const defaultPosition = locations.length
@@ -42,13 +50,15 @@ export default function Dashboard({ locations }) {
                                     center={defaultPosition}
                                     zoom={13}
                                     scrollWheelZoom={true}
-                                    className="h-full w-full"
+                                    className="h-full w-full z-0"
                                 >
+                                    {/* 🌍 Background map */}
                                     <TileLayer
-                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                                        attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
                                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                     />
 
+                                    {/* 📍 Tampilkan semua lokasi */}
                                     {locations.map((loc) => (
                                         <Marker
                                             key={loc.id}
@@ -56,29 +66,52 @@ export default function Dashboard({ locations }) {
                                                 loc.latitude,
                                                 loc.longitude,
                                             ]}
+                                            icon={blueIcon}
                                         >
                                             <Popup>
-                                                <div className="text-sm">
-                                                    <h4 className="font-semibold text-base mb-1">
-                                                        {loc.name}
-                                                    </h4>
-                                                    <p>
-                                                        <strong>Jenis:</strong>{" "}
-                                                        {loc.jenis}
-                                                    </p>
-                                                    <p>
-                                                        <strong>
-                                                            Keterangan:
-                                                        </strong>{" "}
-                                                        {loc.keterangan}
-                                                    </p>
-                                                    {loc.foto && (
+                                                <div className="w-56 bg-white rounded-xl overflow-hidden shadow-lg border border-gray-200">
+                                                    {/* Gambar lokasi */}
+                                                    {loc.foto ? (
                                                         <img
                                                             src={`/storage/${loc.foto}`}
                                                             alt={loc.name}
-                                                            className="mt-2 rounded-md w-full object-cover"
+                                                            className="w-full h-32 object-cover"
                                                         />
+                                                    ) : (
+                                                        <div className="w-full h-32 bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
+                                                            Tidak ada foto
+                                                        </div>
                                                     )}
+
+                                                    {/* Konten teks */}
+                                                    <div className="p-3">
+                                                        <h4 className="text-base font-semibold text-gray-900 mb-1 truncate">
+                                                            {loc.name}
+                                                        </h4>
+                                                        {loc.jenis && (
+                                                            <p className="text-gray-700 text-sm mb-1">
+                                                                <span className="font-medium">
+                                                                    Jenis:
+                                                                </span>{" "}
+                                                                {loc.jenis}
+                                                            </p>
+                                                        )}
+                                                        {loc.keterangan && (
+                                                            <p className="text-gray-600 text-xs mb-2 line-clamp-3">
+                                                                {loc.keterangan}
+                                                            </p>
+                                                        )}
+                                                        <div className="text-xs text-gray-500 mb-3">
+                                                            📍{" "}
+                                                            {parseFloat(
+                                                                loc.latitude
+                                                            ).toFixed(5)}
+                                                            ,{" "}
+                                                            {parseFloat(
+                                                                loc.longitude
+                                                            ).toFixed(5)}
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </Popup>
                                         </Marker>
