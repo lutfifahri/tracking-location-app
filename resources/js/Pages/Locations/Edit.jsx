@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { useForm } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -17,13 +17,13 @@ L.Icon.Default.mergeOptions({
         .href,
 });
 
-export default function Edit({ location }) {
+export default function Edit({ location, jenisLokasi }) {
     const { data, setData, put, processing } = useForm({
-        name: location.name,
-        jenis: location.jenis,
-        keterangan: location.keterangan,
-        latitude: location.latitude,
-        longitude: location.longitude,
+        name: location.name || "",
+        jenis_lokasi_id: location.jenis_lokasi?.id || "", // <-- ubah ini
+        keterangan: location.keterangan || "",
+        latitude: location.latitude || "",
+        longitude: location.longitude || "",
         foto: null,
     });
 
@@ -107,6 +107,7 @@ export default function Edit({ location }) {
 
     return (
         <AuthenticatedLayout header={<h2>Edit Lokasi</h2>}>
+            <Head title="Edit Data-Lokasi" />
             <div className="max-w-7xl mx-auto p-6">
                 <div className="bg-white shadow-md rounded-lg p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Form kiri */}
@@ -134,15 +135,22 @@ export default function Edit({ location }) {
                                 <label className="block text-sm font-medium text-gray-700">
                                     Jenis Lokasi
                                 </label>
-                                <input
-                                    type="text"
-                                    name="jenis"
-                                    className="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    value={data.jenis}
+                                <select
+                                    className="border p-2 w-full rounded focus:ring focus:ring-blue-200"
+                                    value={data.jenis_lokasi_id || ""}
                                     onChange={(e) =>
                                         setData("jenis", e.target.value)
                                     }
-                                />
+                                >
+                                    <option value="">
+                                        -- Pilih Jenis Lokasi --
+                                    </option>
+                                    {jenisLokasi.map((jenis) => (
+                                        <option key={jenis.id} value={jenis.id}>
+                                            {jenis.nama}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div>

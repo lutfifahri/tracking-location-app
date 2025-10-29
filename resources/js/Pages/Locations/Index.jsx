@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useForm, router } from "@inertiajs/react"; // ← pastikan router diimport
+import { useForm, router, Head } from "@inertiajs/react"; // ← pastikan router diimport
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-control-geocoder";
@@ -14,16 +14,18 @@ L.Icon.Default.mergeOptions({
         "leaflet/dist/images/marker-icon-2x.png",
         import.meta.url
     ).href,
-    iconUrl: new URL("leaflet/dist/images/marker-icon.png", import.meta.url)
-        .href,
+    iconUrl: new URL(
+        "https://cdn-icons-png.flaticon.com/512/2776/2776067.png",
+        import.meta.url
+    ).href,
     shadowUrl: new URL("leaflet/dist/images/marker-shadow.png", import.meta.url)
         .href,
 });
 
-export default function Index({ locations }) {
+export default function Index({ locations, jenisLokasi }) {
     const { data, setData, post, reset } = useForm({
         name: "",
-        jenis: "",
+        jenis_lokasi: "",
         keterangan: "",
         foto: null,
         latitude: "",
@@ -136,7 +138,7 @@ export default function Index({ locations }) {
                         loc.name
                     }</h3>
                     <p style="font-size:13px; color:#555; margin:0 0 6px 0;">${
-                        loc.jenis || "Jenis lokasi tidak tersedia"
+                        loc.jenis_lokasi?.nama || "Jenis lokasi tidak tersedia"
                     }</p>
                     ${
                         loc.keterangan
@@ -172,7 +174,7 @@ export default function Index({ locations }) {
                     Swal.fire({
                         title: loc.name || "Tanpa Nama",
                         html: `
-                    <p><b>Jenis:</b> ${loc.jenis || "-"}</p>
+                    <p><b>Jenis:</b> ${loc.jenis_lokasi?.nama || "-"}</p>
                     <p><b>Keterangan:</b> ${loc.keterangan || "-"}</p>
                     ${
                         loc.foto
@@ -275,6 +277,7 @@ export default function Index({ locations }) {
                 </h2>
             }
         >
+            <Head title="Data-Lokasi" />
             <div className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* 🧭 Card Form Input */}
@@ -303,15 +306,22 @@ export default function Index({ locations }) {
                                 <label className="block text-sm font-medium text-gray-600 mb-1">
                                     Jenis Lokasi
                                 </label>
-                                <input
-                                    type="text"
-                                    placeholder="Wisata, Kantor, Sekolah, dll"
+                                <select
                                     className="border p-2 w-full rounded focus:ring focus:ring-blue-200"
-                                    value={data.jenis}
+                                    value={data.jenis || ""}
                                     onChange={(e) =>
                                         setData("jenis", e.target.value)
                                     }
-                                />
+                                >
+                                    <option value="">
+                                        -- Pilih Jenis Lokasi --
+                                    </option>
+                                    {jenisLokasi.map((jenis) => (
+                                        <option key={jenis.id} value={jenis.id}>
+                                            {jenis.nama}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div>

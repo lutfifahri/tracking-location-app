@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JenisLokasi;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -12,8 +13,13 @@ class LocationController extends Controller
 {
     public function index()
     {
+        $locations = Location::with('jenis_lokasi:id,nama')
+            ->select('id', 'name', 'latitude', 'longitude', 'jenis', 'keterangan', 'foto')
+            ->get();
+
         return Inertia::render('Locations/Index', [
-            'locations' => Location::all()
+            'locations'    => $locations,
+            'jenisLokasi' => JenisLokasi::all(['id', 'nama']),
         ]);
     }
 
@@ -38,10 +44,13 @@ class LocationController extends Controller
         return redirect()->back()->with('success', 'Lokasi berhasil disimpan');
     }
 
-    public function edit(Location $location)
+    public function edit($id)
     {
+        $location = Location::with('jenis_lokasi:id,nama')->findOrFail($id);
+
         return Inertia::render('Locations/Edit', [
-            'location' => $location
+            'location'      => $location,
+            'jenisLokasi'   => JenisLokasi::all(['id', 'nama']),
         ]);
     }
 

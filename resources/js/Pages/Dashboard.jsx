@@ -14,12 +14,13 @@ L.Icon.Default.mergeOptions({
     shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-// ✅ (Opsional) Custom icon biru
-const blueIcon = new L.Icon({
-    iconUrl: "https://cdn-icons-png.flaticon.com/512/854/854878.png",
-    iconSize: [30, 30],
-    iconAnchor: [15, 30],
-    popupAnchor: [0, -28],
+// Ganti bagian ini di atas export default function Dashboard...
+const blueMarker = new L.Icon({
+    iconUrl: "https://cdn-icons-png.flaticon.com/512/2776/2776067.png", // 📍 Marker biru glossy
+    iconSize: [38, 38],
+    iconAnchor: [19, 38],
+    popupAnchor: [0, -35],
+    shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
 export default function Dashboard({ locations }) {
@@ -66,7 +67,7 @@ export default function Dashboard({ locations }) {
                                                 loc.latitude,
                                                 loc.longitude,
                                             ]}
-                                            icon={blueIcon}
+                                            icon={blueMarker}
                                         >
                                             <Popup>
                                                 <div className="w-56 bg-white rounded-xl overflow-hidden shadow-lg border border-gray-200">
@@ -93,7 +94,10 @@ export default function Dashboard({ locations }) {
                                                                 <span className="font-medium">
                                                                     Jenis:
                                                                 </span>{" "}
-                                                                {loc.jenis}
+                                                                {loc
+                                                                    .jenis_lokasi
+                                                                    ?.nama ||
+                                                                    "-"}
                                                             </p>
                                                         )}
                                                         {loc.keterangan && (

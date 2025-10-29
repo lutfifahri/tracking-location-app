@@ -10,7 +10,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $locations = Location::select('id', 'name', 'latitude', 'longitude', 'jenis', 'keterangan', 'foto')->get();
+        $locations = Location::with('jenis_lokasi:id,nama')->get();
 
         return Inertia::render('Dashboard', [
             'locations' => $locations,
